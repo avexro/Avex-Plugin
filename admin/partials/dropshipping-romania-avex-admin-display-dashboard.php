@@ -854,7 +854,7 @@ else
                 ?>
             </p>
             <p>
-                <?php esc_html_e("You can always stop a cron and start it again to start as soon as possible, exception is the Feed Cron which already has the re-import button","dropshipping-romania-avex");?>.
+                <?php esc_html_e("You can always stop a cron and start it again to start as soon as possible, exception is the Feed Cron which already has the re-import button, or it starts imediately if a product limit is present","dropshipping-romania-avex");?>.
             </p>
             <?php
         }

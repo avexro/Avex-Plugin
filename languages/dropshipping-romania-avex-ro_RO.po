@@ -1210,11 +1210,11 @@ msgstr "Note"
 
 msgid ""
 "You can always stop a cron and start it again to start as soon as possible, exception is "
-"the Feed Cron which already has the re-import button"
+"the Feed Cron which already has the re-import button, or it starts imediately if a product limit is present"
 
 msgstr ""
 "Puteti oricand sa opriti un cron si sa il porniti din nou pentru a incepe imediat, exceptie este "
-"Cron-ul de Feed care deja are butonul de reimportare"
+"Cron-ul de Feed care deja are butonul de reimportare, sau incepe imediat daca exista o limita de produse"
 
 msgid "Scheduled WC existing Products prepare for update task"
 msgstr "S-a setat procesul de pregatire a produselor existente in WC"
@@ -1235,3 +1235,14 @@ msgstr "Sarcina de pregatire a produselor Avex incepe in curand"
 
 msgid "The Prepare Avex Products task is running, please wait"
 msgstr "Sarcina de pregatire a produselor Avex ruleaza, asteptati"
+
+msgid ""
+"Error in scheduling the WC existing Products prepare for update task because of incompatible PHP version "
+"or WC not activated or missing action scheduler"
+
+msgstr ""
+"Eroare in setarea procesului de pregatire a produselor existente in WC pentruca PHP nu este compatibil sau "
+"WC nu este activat sau lipseste action scheduler"
+
+msgid "Finished WC existing Products prepare for update task"
+msgstr "S-a terminat procesul de pregatire a produselor existente in WC"

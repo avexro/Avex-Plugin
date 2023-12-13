@@ -1068,6 +1068,7 @@ class avex{
                             update_post_meta($post_id,"_avex_imported_product","1");
                             if($old_post_status!="")
                                 $this->setProductPublishStatus($post_id,$old_post_status);
+
                             $sales_price=0;
                             $price_add_percent=(int)$this->config->price_add_percent;
                             if($price_add_percent>0)//sales price
@@ -1086,6 +1087,7 @@ class avex{
                                 update_post_meta($post_id,"_sale_price",sanitize_text_field((float)$sales_price));
                                 update_post_meta($post_id,"_price",sanitize_text_field((float)$sales_price));
                             }
+
                             $price_reduced_percent=(int)$this->config->price_reduced_percent;
                             if($price_reduced_percent>0)//regular price
                             {
@@ -1101,25 +1103,37 @@ class avex{
                             {
                                 if($sales_price==0)
                                     $regular_price=$old_sales_price;
-                                if($sales_price==0)
-                                    $regular_price=(float)$result->sales_price;;
+                                if($regular_price==0)
+                                    $regular_price=(float)$result->sales_price;
                                  update_post_meta($post_id,"_regular_price",sanitize_text_field((float)$regular_price));
                             }
                         }
                         if(!$override_prices && $csv_post_id>0)
                         {
                             if($old_sales_price!="")
+                            {
                                 update_post_meta($post_id,"_sale_price",sanitize_text_field((float)$old_sales_price));
+                                update_post_meta($post_id,"_price",sanitize_text_field((float)$old_sales_price));
+                            }
                             if($old_price!="")
                                 update_post_meta($post_id,"_regular_price",sanitize_text_field((float)$old_price));
                         }
                         //update the status
                         $status="draft";
-                        if($publish_products && $csv_post_id==0)//only new products
+                        if(!$is_cron)
                         {
-                            $status="publish";
-                            $sql=$wpdb->prepare("update ".$wpdb->prefix."posts set post_status=%s where ID=%d",array(sanitize_text_field($status),(int)$post_id));
-                            $wpdb->query($sql);
+                            if($publish_products && $csv_post_id==0)//only new products
+                            {
+                                $status="publish";
+                                wp_update_post(array('ID' => (int)$post_id, 'post_status' => sanitize_text_field($status)));
+                            }
+                            else if($publish_products)//existing products need to change it because importer does not touch publish status
+                            {
+                                $status="publish";
+                                wp_update_post(array('ID' => (int)$post_id, 'post_status' => sanitize_text_field($status)));
+                            }
+                            else
+                                wp_update_post(array('ID' => (int)$post_id, 'post_status' => sanitize_text_field($status)));
                         }
                     }
                 }
@@ -2792,12 +2806,21 @@ class avex{
         }
         $this->checkForExistingProducts();
         $this->setSetupValue("setup_step","0");
+        $this->saveLog(__("Finished WC existing Products prepare for update task","dropshipping-romania-avex"));
     }
     public function checkIfImportExistingProductsBySkuAvailable()
     {
         global $wpdb;
         set_time_limit(0);
         proc_nice(20);
+        $php_version_good=false;
+        if(version_compare( PHP_VERSION, '7.2' ) >= 0)
+            $php_version_good=true;
+        if(!$this->is_woocommerce_activated() || !is_file(WC()->plugin_path()."/packages/action-scheduler/action-scheduler.php") || !$php_version_good)
+        {
+            $this->saveLog(__("Error in scheduling the WC existing Products prepare for update task because of incompatible PHP version or WC not activated or missing action scheduler","dropshipping-romania-avex"));
+            return false;
+        }
         $request=$this->getProductsFeed();
         if(isset($request['status']) && $request['status']=='ok')
         {
@@ -2807,19 +2830,28 @@ class avex{
                 $products=array_map("str_getcsv", explode("\n", $result));
                 if(is_array($products) && count($products)>1)
                 {
+                    $total_products=0;
+                    $sql=$wpdb->prepare("select 
+                        count(*) as total
+                        from ".$wpdb->prefix."posts 
+                        where post_type='product'
+                     ");
+                    $result=$wpdb->get_row($sql);
+                    if(isset($result->total))
+                        $total_products=(int)$result->total;
                     $sql=$wpdb->prepare("select 
                         count(*) as total
                         from ".$wpdb->prefix."postmeta 
                         where meta_key='_avex_imported_product' and meta_value=1
                      ");
                     $result=$wpdb->get_row($sql);
-                    if(isset($result->total) && (int)$result->total==0)
+                    if(isset($result->total) && (int)$result->total==0 && $total_products>0)
                     {
                         $action_added=$this->addActionSchedulerTask("dropshipping_romania_avex_prepare_products_for_import_hook",array(),"dropshipping_romania_avex");
                         if($action_added)
                             $action_added=true;
 
-                        if($action_added || 1==1)
+                        if($action_added)
                         {
                             $this->setSetupValue("setup_step","-1");
                             $this->saveLog(__("Scheduled WC existing Products prepare for update task","dropshipping-romania-avex"));
