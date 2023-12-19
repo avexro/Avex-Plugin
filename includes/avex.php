@@ -682,6 +682,17 @@ class avex{
         $override_products=sanitize_text_field($override_products);
         set_time_limit(0);
         proc_nice(20);
+
+        $memgood=false;
+        $current_memory_limit=ini_get("memory_limit");
+        if($current_memory_limit && (int)$current_memory_limit<256)
+        {
+            ini_set("memory_limit","256M");
+            $new_memory_limit=ini_get("memory_limit");
+            if($new_memory_limit && (int)$new_memory_limit!=256)
+                $this->saveLog(__("Error in setting memory limit","dropshipping-romania-avex"));
+        }
+
         $this->saveLog(__("Started Setup Feed products import","dropshipping-romania-avex"));
         $this->importFeedFromDb($publish_products, $override_products);
     }
@@ -1190,6 +1201,16 @@ class avex{
         set_time_limit(0);
         proc_nice(20);
 
+        $memgood=false;
+        $current_memory_limit=ini_get("memory_limit");
+        if($current_memory_limit && (int)$current_memory_limit<256)
+        {
+            ini_set("memory_limit","256M");
+            $new_memory_limit=ini_get("memory_limit");
+             if($new_memory_limit && (int)$new_memory_limit!=256)
+                $this->saveLog(__("Error in setting memory limit","dropshipping-romania-avex"));
+        }
+
         $this->setSetupValue("deleting_products","1");
 
         $sql=$wpdb->prepare("truncate table ".$wpdb->prefix."dropshipping_romania_avex_products");
@@ -1287,6 +1308,17 @@ class avex{
         $update_prices=false;//we do not use this anymore, prices can be updated only from feed
         set_time_limit(0);
         proc_nice(20);
+
+        $memgood=false;
+        $current_memory_limit=ini_get("memory_limit");
+        if($current_memory_limit && (int)$current_memory_limit<256)
+        {
+            ini_set("memory_limit","256M");
+            $new_memory_limit=ini_get("memory_limit");
+             if($new_memory_limit && (int)$new_memory_limit!=256)
+                $this->saveLog(__("Error in setting memory limit","dropshipping-romania-avex"));
+        }
+
         $this->saveLog(__("Started API product stock refresh","dropshipping-romania-avex"));
         $result=$this->doAvexRequest($this->avex_api_products_url);
         $cnt=0;
@@ -1406,6 +1438,16 @@ class avex{
 
         set_time_limit(0);
         proc_nice(20);
+
+        $memgood=false;
+        $current_memory_limit=ini_get("memory_limit");
+        if($current_memory_limit && (int)$current_memory_limit<256)
+        {
+            ini_set("memory_limit","256M");
+            $new_memory_limit=ini_get("memory_limit");
+             if($new_memory_limit && (int)$new_memory_limit!=256)
+                $this->saveLog(__("Error in setting memory limit","dropshipping-romania-avex"));
+        }
 
         $this->cleanLogs();
 
@@ -1657,6 +1699,17 @@ class avex{
         $update_prices=false;//we do not use this anymore, prices can be updated only from feed
         set_time_limit(0);
         proc_nice(20);
+
+        $memgood=false;
+        $current_memory_limit=ini_get("memory_limit");
+        if($current_memory_limit && (int)$current_memory_limit<256)
+        {
+            ini_set("memory_limit","256M");
+            $new_memory_limit=ini_get("memory_limit");
+             if($new_memory_limit && (int)$new_memory_limit!=256)
+                $this->saveLog(__("Error in setting memory limit","dropshipping-romania-avex"));
+        }
+
         $this->saveLog(__("Started API product stock refresh from cron","dropshipping-romania-avex"));
         $result=$this->doAvexRequest($this->avex_api_products_url);
         $cnt=0;
@@ -2274,6 +2327,17 @@ class avex{
         global $wpdb;
         set_time_limit(0);
         proc_nice(20);
+
+        $memgood=false;
+        $current_memory_limit=ini_get("memory_limit");
+        if($current_memory_limit && (int)$current_memory_limit<256)
+        {
+            ini_set("memory_limit","256M");
+            $new_memory_limit=ini_get("memory_limit");
+             if($new_memory_limit && (int)$new_memory_limit!=256)
+                $this->saveLog(__("Error in setting memory limit","dropshipping-romania-avex"));
+        }
+
         $sync_orders_newer_than=(int)$this->config->sync_orders_newer_than;
         $stamp=strtotime(date("Y-m-d 00:00:00")."-".$sync_orders_newer_than." days");
         $sql=$wpdb->prepare("select p.ID, m.meta_value as avex_order_id from ".$wpdb->prefix."postmeta m
@@ -2552,6 +2616,17 @@ class avex{
 
         set_time_limit(0);
         proc_nice(20);
+
+        $memgood=false;
+        $current_memory_limit=ini_get("memory_limit");
+        if($current_memory_limit && (int)$current_memory_limit<256)
+        {
+            ini_set("memory_limit","256M");
+            $new_memory_limit=ini_get("memory_limit");
+             if($new_memory_limit && (int)$new_memory_limit!=256)
+                $this->saveLog(__("Error in setting memory limit","dropshipping-romania-avex"));
+        }
+
         $args = array(
             'role'    => 'administrator',
             'number' => 1
@@ -2755,6 +2830,17 @@ class avex{
         global $wpdb;
         set_time_limit(0);
         proc_nice(20);
+
+        $memgood=false;
+        $current_memory_limit=ini_get("memory_limit");
+        if($current_memory_limit && (int)$current_memory_limit<256)
+        {
+            ini_set("memory_limit","256M");
+            $new_memory_limit=ini_get("memory_limit");
+             if($new_memory_limit && (int)$new_memory_limit!=256)
+                $this->saveLog(__("Error in setting memory limit","dropshipping-romania-avex"));
+        }
+
         $request=$this->getProductsFeed();
         if(isset($request['status']) && $request['status']=='ok')
         {
@@ -2813,12 +2899,28 @@ class avex{
         global $wpdb;
         set_time_limit(0);
         proc_nice(20);
+
+        $memory_limit_good=false;
+        $current_memory_limit=ini_get("memory_limit");
+        if($current_memory_limit && (int)$current_memory_limit>=256)
+            $memory_limit_good=true;
+        else if($current_memory_limit && (int)$current_memory_limit<256)
+        {
+            ini_set("memory_limit","256M");
+            $new_memory_limit=ini_get("memory_limit");
+            if($new_memory_limit && (int)$new_memory_limit==256)
+            {
+                ini_set("memory_limit",$current_memory_limit."M");
+                $memory_limit_good=true;
+            }
+        }
+
         $php_version_good=false;
         if(version_compare( PHP_VERSION, '7.2' ) >= 0)
             $php_version_good=true;
-        if(!$this->is_woocommerce_activated() || !is_file(WC()->plugin_path()."/packages/action-scheduler/action-scheduler.php") || !$php_version_good)
+        if(!$this->is_woocommerce_activated() || !is_file(WC()->plugin_path()."/packages/action-scheduler/action-scheduler.php") || !$php_version_good || !$memory_limit_good)
         {
-            $this->saveLog(__("Error in scheduling the WC existing Products prepare for update task because of incompatible PHP version or WC not activated or missing action scheduler","dropshipping-romania-avex"));
+            $this->saveLog(__("Error in scheduling the WC existing Products prepare for update task because of incompatible PHP version or WC not activated or missing action scheduler or memory limit under 256M","dropshipping-romania-avex"));
             return false;
         }
         $request=$this->getProductsFeed();

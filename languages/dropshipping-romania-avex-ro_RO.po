@@ -954,13 +954,12 @@ msgstr "ID Comanda"
 
 #: dropshipping-romania-avex-admin-display-help.php:21
 msgid ""
-"On the Dashboard tab you need to add your Avex API username and Avex API "
-"password, if everything is ok you will se a message to continue with your "
-"first Avex products import"
+"On the Dashboard tab you need to add your username and password used when you created your Avex Account, "
+"if everything is ok you will se a message to continue with your first Avex products import"
 msgstr ""
-"In fila Panou Control trebuie sa adaugati numele de utilizator Avex API si "
-"parola Avex API, daca totul este in regula, veti vedea un mesaj pentru a "
-"continua cu primul import de produse Avex"
+"Pentru a utiliza API-ul, in fila Panou Control trebuie sa adaugati numele de utilizator si parola folosita la "
+"crearea contului pe AVEX iar daca totul este in regula, veti vedea un mesaj de confirmare pentru a continua cu "
+"primul import de produse Avex"
 
 #: dropshipping-romania-avex-admin-display-help.php:27
 msgid ""
@@ -1238,11 +1237,21 @@ msgstr "Sarcina de pregatire a produselor Avex ruleaza, asteptati"
 
 msgid ""
 "Error in scheduling the WC existing Products prepare for update task because of incompatible PHP version "
-"or WC not activated or missing action scheduler"
+"or WC not activated or missing action scheduler or memory limit under 256M"
 
 msgstr ""
 "Eroare in setarea procesului de pregatire a produselor existente in WC pentruca PHP nu este compatibil sau "
-"WC nu este activat sau lipseste action scheduler"
+"WC nu este activat sau lipseste action scheduler sau limita de memorie sub 256M"
 
 msgid "Finished WC existing Products prepare for update task"
 msgstr "S-a terminat procesul de pregatire a produselor existente in WC"
+
+msgid ""
+"The plugin requires at least a memory limit of 256MB, setting the limit from code using ini_set php "
+"function does not seam to work, please contact your hosting provider to increase the memory limit"
+msgstr ""
+"Pluginul necesita cel putin o limita de memorie de 256 MB, setand limita din cod folosind functia php ini_set "
+"nu pare sa functioneze, va rugam sa contactati furnizorul dvs. de gazduire pentru a creste limita de memorie"
+
+msgid "Error in setting memory limit"
+msgstr "Eroare in setare limita memorie"

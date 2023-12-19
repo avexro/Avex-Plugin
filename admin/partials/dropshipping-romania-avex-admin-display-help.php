@@ -18,7 +18,7 @@ if ( ! current_user_can( 'manage_options' ) ) {
         <td><strong><?php esc_html_e("How to setup my Avex account","dropshipping-romania-avex");?>?</strong></td>
     </tr>
     <tr>
-        <td><?php esc_html_e("On the Dashboard tab you need to add your Avex API username and Avex API password, if everything is ok you will se a message to continue with your first Avex products import","dropshipping-romania-avex");?>.</td>
+        <td><?php esc_html_e("On the Dashboard tab you need to add your username and password used when you created your Avex Account, if everything is ok you will se a message to continue with your first Avex products import","dropshipping-romania-avex");?>.</td>
     </tr>
     <tr>
         <td><strong><?php esc_html_e("What happens if I changed my Avex API details","dropshipping-romania-avex");?>?</strong></td>

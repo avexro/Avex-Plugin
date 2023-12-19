@@ -86,6 +86,22 @@ if($action=="cancel_admin_feed_import")
     check_admin_referer( 'dropshipping_romania_avex_cancel_admin_feed_import' );
     $msg=$avex->cancelAdminFeedImport();
 }
+
+$memory_limit_good=false;
+$current_memory_limit=ini_get("memory_limit");
+if($current_memory_limit && (int)$current_memory_limit>=256)
+    $memory_limit_good=true;
+else if($current_memory_limit && (int)$current_memory_limit<256)
+{
+    ini_set("memory_limit","256M");
+    $new_memory_limit=ini_get("memory_limit");
+    if($new_memory_limit && (int)$new_memory_limit==256)
+    {
+        ini_set("memory_limit",$current_memory_limit."M");
+        $memory_limit_good=true;
+    }
+}
+
 ?>
 <h2><?php esc_html_e('Dashboard','dropshipping-romania-avex');?></h2>
 <?php
@@ -123,6 +139,14 @@ else if(!$php_version_good)
     ?>
     <div class="avex-error-div">
         <?php esc_html_e("PHP version must be at least 7.2","dropshipping-romania-avex");?>.
+    </div>
+    <?php
+}
+else if(!$memory_limit_good)
+{
+    ?>
+    <div class="avex-error-div">
+        <?php esc_html_e("The plugin requires at least a memory limit of 256MB, setting the limit from code using ini_set php function does not seam to work, please contact your hosting provider to increase the memory limit","dropshipping-romania-avex");?>.
     </div>
     <?php
 }
