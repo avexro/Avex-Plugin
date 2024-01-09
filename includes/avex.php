@@ -1098,7 +1098,7 @@ class avex{
                                 update_post_meta($post_id,"_sale_price",sanitize_text_field((float)$sales_price));
                                 update_post_meta($post_id,"_price",sanitize_text_field((float)$sales_price));
                             }
-
+                            $regular_price=0;
                             $price_reduced_percent=(int)$this->config->price_reduced_percent;
                             if($price_reduced_percent>0)//regular price
                             {
@@ -1108,6 +1108,15 @@ class avex{
                                 $percent=round($percent,2);
                                 $regular_price=$sales_price+$percent;
                                 $regular_price=number_format(round($regular_price,2),2,".","");
+                                update_post_meta($post_id,"_regular_price",sanitize_text_field((float)$regular_price));
+                            }
+                            else if($price_reduced_percent==0)
+                            {
+                                if($sales_price==0)
+                                    $sales_price=$old_sales_price;
+                                if($sales_price==0)
+                                    $sales_price=(float)$result->avex_price;
+                                $regular_price=$sales_price;
                                 update_post_meta($post_id,"_regular_price",sanitize_text_field((float)$regular_price));
                             }
                             else

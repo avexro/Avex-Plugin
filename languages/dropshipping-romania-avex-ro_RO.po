@@ -99,10 +99,10 @@ msgstr ""
 
 msgid ""
 "If checked the Feed synchronization will override the product prices with the "
-"Avex recommended price"
+"Avex price and the selected VAT value"
 msgstr ""
 "Daca este bifata, sincronizarea Feedului va suprascrie preturile produselor "
-"cu pretul recomandat de Avex"
+"cu pretul Avex si TVA-ul selectat"
 
 msgid ""
 "If checked the Feed synchronization will create new products and categories"
