@@ -17,7 +17,7 @@ WHAT IS THE AVEX DROPSHIPPING SERVICE?
 
 Dropshipping is a business model that allows you to have all AVEX stocks at your disposal without having to invest a single cent.
 
-Benefits:
+Benefitss:
 
 * You don't need to accumulate stock or invest in stock. Thousands of AVEX products will become your stock.
 * We do the preparation for orders and packaging, we become your logistics operator.
