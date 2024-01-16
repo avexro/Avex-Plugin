@@ -832,6 +832,7 @@ class avex{
                     $published=(($published)?1:0);
                 $categories=$prod->category;
                 $categories=str_replace(">"," > ",$categories);
+                $categories=str_replace(",","[avex-comma-separator]",$categories);
                 $images=array();
                 $images[]=$prod->image;
                 $tmp=explode(";",$prod->images);
@@ -844,13 +845,22 @@ class avex{
                     }
                 }
                 $images_str=implode(", ",$images);
+                $featured_status=0;
+                $existing_product_id = wc_get_product_id_by_sku(sanitize_text_field($prod->sku));
+                if ($existing_product_id)
+                {
+                    $is_featured = has_term('featured', 'product_visibility', $existing_product_id);
+
+                    if ($is_featured)
+                        $featured_status=1;
+                } 
                 $csv[]=array(
                     $the_post_id,
                     "simple",
                     sanitize_text_field($prod->sku),
                     sanitize_text_field($prod->title),
                     sanitize_text_field($published),
-                    0,
+                    $featured_status,
                     "visible",
                     "",
                     wp_kses_post($prod->description),
@@ -953,6 +963,26 @@ class avex{
         {
             $sql=$wpdb->prepare("update ".$wpdb->prefix."posts set post_status=%s where ID=%d",array($status,$post_id));
             $wpdb->query($sql);
+        }
+    }
+    public function fixProductCategoriesCommaInTitle()
+    {
+        global $wpdb;
+        $sql=$wpdb->prepare("update ".$wpdb->prefix."terms set name=REPLACE(name, %s, %s) WHERE name LIKE %s",array("[avex-comma-separator]",",","%[avex-comma-separator]%"));
+        $wpdb->query($sql);
+        $sql=$wpdb->prepare("select t.term_id from ".$wpdb->prefix."terms t inner join ".$wpdb->prefix."term_taxonomy x on x.term_id=t.term_id where t.slug like %s and x.taxonomy=%s",array("%avex-comma-separator%","product_cat"));
+        $results=$wpdb->get_results($sql);
+        if(is_array($results))
+        {
+            foreach($results as $result)
+            {
+                $term = get_term((int)$result->term_id);
+                if (!is_wp_error($term))
+                {
+                    $new_slug = sanitize_title($term->name);
+                    wp_update_term($term->term_id, 'product_cat', array('slug' => $new_slug));
+                }
+            }
         }
     }
     public function importFeedFromDb($publish_products="", $override_products="", $override_prices=true, $is_cron=false)
@@ -1061,6 +1091,7 @@ class avex{
                 {
                     foreach($product_ids as $post_id)
                     {
+                        $this->fixProductCategoriesCommaInTitle();
                         $sku=get_post_meta($post_id,"_sku",true);
                         $sql=$wpdb->prepare("update ".$wpdb->prefix."dropshipping_romania_avex_products set post_id=%d, imported=%d where sku=%s",array($post_id,1,$sku));
                         $wpdb->query($sql);
