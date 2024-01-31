@@ -252,16 +252,16 @@ msgid "minutes"
 msgstr "minute"
 
 msgid "Your Avex API User"
-msgstr "Userul tau API Avex"
+msgstr "Utilizatorul tau Avex"
 
 msgid "Your Avex API Password"
-msgstr "Parola ta API Avex"
+msgstr "Avex API Key (se gaseste in contul Avex la paginea Integrari & Feed-uri)"
 
 msgid "Avex API User"
-msgstr "Userul API Avex"
+msgstr "Utilizator Avex"
 
 msgid "Avex API Password"
-msgstr "Parola API Avex"
+msgstr "API Avex Key"
 
 msgid "days"
 msgstr "zile"
@@ -399,7 +399,7 @@ msgid ""
 "Add your Avex API username and password in the form below to start the setup "
 "process"
 msgstr ""
-"Adaugati numele de utilizator si parola Avex API in formularul de mai jos "
+"Adaugati numele de utilizator si Avex API Key in formularul de mai jos "
 "pentru a incepe procesul de configurare"
 
 msgid "Start the Setup"
@@ -412,7 +412,7 @@ msgid "Avex API authentication Success"
 msgstr "Avex API autentificare cu Succes"
 
 msgid "Avex API user and password are required"
-msgstr "Sunt necesare utilizatorul si parola Avex API"
+msgstr "Sunt necesare utilizatorul si Avex API Key"
 
 msgid "Something went wrong, please try again"
 msgstr "Ceva nu a mers bine, va rugam sa incercati din nou"
@@ -433,11 +433,9 @@ msgid "Error in starting the Setup process"
 msgstr "Eroare in procesul de configurare"
 
 msgid ""
-"Your Avex API access does not seam to work, if you changed your password in "
-"your Avex account make sure that you change the details in Config too"
+"Your Avex API access does not seam to work, please contact support"
 msgstr ""
-"Accessul la API Avex nu pare sa functioneze, daca ati schimbat parola in "
-"contul Avex nu uitati sa schimbati detaliile si in Configurare"
+"Accessul la API Avex nu pare sa functioneze, va rugam sa contactati asistenta"
 
 msgid "Company Name"
 msgstr "Nume Companie"
@@ -957,9 +955,8 @@ msgid ""
 "On the Dashboard tab you need to add your username and password used when you created your Avex Account, "
 "if everything is ok you will se a message to continue with your first Avex products import"
 msgstr ""
-"Pentru a utiliza API-ul, in fila Panou Control trebuie sa adaugati numele de utilizator si parola folosita la "
-"crearea contului pe AVEX iar daca totul este in regula, veti vedea un mesaj de confirmare pentru a continua cu "
-"primul import de produse Avex"
+"Pentru a utiliza API-ul, in fila Panou Control trebuie sa adaugati numele de utilizator si API Key pe care il "
+"gasiti in contul AVEX la paginea Integrari & Feed-uri si daca totul este in regula veti vedea un mesaj de confirmare pentru a continua cu primul import de produse Avex"
 
 #: dropshipping-romania-avex-admin-display-help.php:27
 msgid ""
@@ -967,7 +964,7 @@ msgid ""
 "username and password"
 msgstr ""
 "Ar trebui sa accesati fila de configurare si sa setati numele de utilizator "
-"si parola corecte pentru Avex API"
+"si Avex API Key"
 
 #: dropshipping-romania-avex-admin-display-help.php:33
 msgid ""
