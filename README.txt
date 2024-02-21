@@ -1,7 +1,7 @@
 === Dropshipping Romania Avex ===
-Contributors: honeybadgerit
+Contributors: @claudiumaftei
 Donate link: https://avex.ro/
-Tags: woocommerce, woocommerce order management, dropshipping, dropshipping romania, dropshiping avex, dropshipping romania avex
+Tags: woocommerce, dropshipping, dropshipping romania, dropshiping avex, dropshipping romania avex
 Requires at least: 6.2
 Tested up to: 6.4
 Requires PHP: 7.2
@@ -46,6 +46,23 @@ What AVEX does:
 In other words:
 
 You deal entirely with your customers, and Avex packs and ships the goods to them, after which it generates the tax invoice for the ordered products that you will find in the customer account, next to the order.
+
+This plugin is intended to use the AVEX Ddopshipping API, the used API endpoints are:
+
+* https://api.avex.ro/account/get_status - to check your account status
+* https://export.avex.ro/wp-load.php?security_token=016d0da95f890dba&export_id=3&action=get_data - product feed to import products to your shop
+* https://api.avex.ro/products/list_products - API endpoint to retreive products
+* https://api.avex.ro/orders/add_order - API endpoint to send an order to AVEX
+* https://api.avex.ro/orders/cancel_order - API endpoint to cancel an order on AVEX
+* https://api.avex.ro/orders/get_order_status/ - API endpoint to check the status of an order
+* https://api.avex.ro/account/list_invoices - API endpoint to list your AVEX invoices
+* https://api.avex.ro/account/get_invoice/ - API endpoint to retreive one of your invoices
+* https://avex.ro/index.php?dispatch=orders.details&order_id= - web resource to easily load an Avex order on your web browser
+
+By using this plugin you and your WC clients agree with:
+* AVEX Terms and Conditions https://avex.ro/termeni-si-conditii-de-colaborare.html
+* AVEX Privacy Policy https://avex.ro/date-cu-caracter-personal.html
+
 
 == Installation ==
 1. Upload the Dropshipping Romania Avex plugin folder to the /wp-content/plugins/ directory
@@ -107,6 +124,7 @@ Yes, the plugin was created to work with WordPress Multisite, for uploads under 
 1. WooCommerce
 2. PHP 7.2
 3. Action Scheduler
+4. PHP proc_nice function to be enabled
 
 == Changelog ==
 

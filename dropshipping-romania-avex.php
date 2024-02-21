@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  * Plugin URI:        https://avex.ro
  * Description:       Importer and Supplier in the Dropshipping system. B2B platform, importer prices.
  * Version:           1.0.0
- * Author:            Stefan Nick
+ * Author:            Avex.ro
  * Author URI:        https://avex.ro/
  * License:           GPL-2.0+
  * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt

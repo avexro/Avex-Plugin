@@ -1252,3 +1252,6 @@ msgstr ""
 
 msgid "Error in setting memory limit"
 msgstr "Eroare in setare limita memorie"
+
+msgid "Order cannot be cancelled anymore"
+msgstr "Comanda nu mai poate fi anulata"

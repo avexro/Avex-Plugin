@@ -131,6 +131,20 @@ class avex{
             $wpdb->query($sql);
         }
     }
+    public function sanitize_text_field_recursive_array( $array )
+    {
+        if ( ! is_array( $array ) )
+            return $array;
+        $sanitized_array = array();
+        foreach ( $array as $key => $value )
+        {
+            if ( is_array( $value ) )
+                $sanitized_array[ $key ] = $this->sanitize_text_field_recursive_array( $value );
+            else
+                $sanitized_array[ $key ] = sanitize_text_field( $value );
+        }
+        return $sanitized_array;
+    }
     public function getLogs()
     {
         global $wpdb;
@@ -138,11 +152,11 @@ class avex{
         $draw=isset($_POST['draw'])?(int)$_POST['draw']:0;
         $start=isset($_POST['start'])?(int)$_POST['start']:0;
         $length=isset($_POST['length'])?(int)$_POST['length']:10;
-        $search_arr=isset($_POST['search'])?$_POST['search']:array();
-        $search=isset($search_arr['value'])?sanitize_text_field($search_arr['value']):"";
         $start_date=isset($_POST['start_date'])?sanitize_text_field($_POST['start_date']):"";
         $end_date=isset($_POST['end_date'])?sanitize_text_field($_POST['end_date']):"";
-        $order_arr=isset($_POST['order'])?$_POST['order']:array();
+        $order_arr=isset($_POST['order'])?$this->sanitize_text_field_recursive_array($_POST['order']):array();
+        $search_arr=isset($_POST['search'])?$this->sanitize_text_field_recursive_array($_POST['search']):array();
+        $search=isset($search_arr['value'])?sanitize_text_field($search_arr['value']):"";
         $logs=new stdClass;
         $logs->logs=array();
         $logs->total_logs=0;
@@ -184,7 +198,6 @@ class avex{
             $logs->total_logs=$result->total;
             $logs->total_filtered_logs=$result->total;
         }
-
         if($search!="")
         {
             $sql=$wpdb->prepare("select count(*) as total from ".$wpdb->prefix."dropshipping_romania_avex_logs l
@@ -203,23 +216,35 @@ class avex{
             $result=$wpdb->get_row($sql);
             if(isset($result->total))
                 $logs->total_filtered_logs=$result->total;
-
-            $sql=$wpdb->prepare("select l.*, u.display_name from ".$wpdb->prefix."dropshipping_romania_avex_logs l
-            left join ".$wpdb->prefix."users u on u.ID=l.user_id
-            where
-            l.mdate>=%s and
-            l.mdate<=%s and
-            (
-                l.`log` like %s or
-                u.display_name like %s or
-                u.user_email like %s or
-                u.user_nicename like %s or
-                u.display_name like %s or
-                u.user_login like %s
-            )
-            order by ".implode(",",array_map('esc_sql',$order_by))."
-            limit %d,%d",array($start_date,$end_date,"%".$search."%","%".$search."%","%".$search."%","%".$search."%","%".$search."%","%".$search."%",$start,$length));
-            $results=$wpdb->get_results($sql);
+            $sql = "select l.*, u.display_name 
+                    FROM ".$wpdb->prefix."dropshipping_romania_avex_logs l
+                    LEFT JOIN ".$wpdb->prefix."users u ON u.ID = l.user_id
+                    WHERE l.mdate >= %s AND l.mdate <= %s AND (
+                        l.`log` LIKE %s OR
+                        u.display_name LIKE %s OR
+                        u.user_email LIKE %s OR
+                        u.user_nicename LIKE %s OR
+                        u.display_name LIKE %s OR
+                        u.user_login LIKE %s
+                    )";
+            $order_by_sql = '';
+            if (!empty($order_by)) {
+                $order_by_sql = "order by ".implode(",",array_map('esc_sql',$order_by));
+            }
+            $sql .= ' ' . $order_by_sql;
+            $query = $wpdb->prepare($sql." LIMIT %d, %d", array(
+                $start_date,
+                $end_date,
+                "%".$search."%",
+                "%".$search."%",
+                "%".$search."%",
+                "%".$search."%",
+                "%".$search."%",
+                "%".$search."%",
+                $start,
+                $length
+            ));
+            $results = $wpdb->get_results($query);
             if(is_array($results))
                 $logs->logs=$results;
         }
@@ -235,14 +260,22 @@ class avex{
                 if(isset($result->total))
                     $logs->total_filtered_logs=$result->total;
             }
-            $sql=$wpdb->prepare("select l.*, u.display_name from ".$wpdb->prefix."dropshipping_romania_avex_logs l
-            left join ".$wpdb->prefix."users u on u.ID=l.user_id
-            where
-            l.mdate>=%s and
-            l.mdate<=%s
-            order by ".implode(",",array_map('esc_sql',$order_by))."
-            limit %d,%d",array($start_date,$end_date,$start,$length));
-            $results=$wpdb->get_results($sql);
+            $sql = "select l.*, u.display_name 
+                    FROM ".$wpdb->prefix."dropshipping_romania_avex_logs l
+                    LEFT JOIN ".$wpdb->prefix."users u ON u.ID = l.user_id
+                    WHERE l.mdate >= %s AND l.mdate <= %s";
+            $order_by_sql = '';
+            if (!empty($order_by)) {
+                $order_by_sql = "order by ".implode(",",array_map('esc_sql',$order_by));
+            }
+            $sql .= ' ' . $order_by_sql;
+            $query = $wpdb->prepare($sql." LIMIT %d, %d", array(
+                $start_date,
+                $end_date,
+                $start,
+                $length
+            ));
+            $results = $wpdb->get_results($query);
             if(is_array($results))
                 $logs->logs=$results;
         }
@@ -269,7 +302,7 @@ class avex{
             $data['draw']=esc_html($logs->draw);
             $data['recordsTotal']=esc_html($logs->total_logs);
             $data['recordsFiltered']=esc_html($logs->total_filtered_logs);
-            echo json_encode($data);
+            echo wp_json_encode($data);
         }
     }
     public function setSetupStep($step=0)
@@ -1320,7 +1353,7 @@ class avex{
     public function refreshProductsStockPrices()
     {
         global $wpdb;
-        $update_prices=isset($_POST['avex_refresh_prices_setup_step_3'])?$_POST['avex_refresh_prices_setup_step_3']:false;
+        $update_prices=isset($_POST['avex_refresh_prices_setup_step_3'])?sanitize_text_field($_POST['avex_refresh_prices_setup_step_3']):false;
         if($update_prices=='on')
             $update_prices=true;
         $update_prices=false;//we do not use this anymore, prices can be updated only from feed
@@ -1824,7 +1857,7 @@ class avex{
     {
         global $wpdb;
         $order_id=isset($_POST['order_id'])?(int)$_POST['order_id']:0;
-        $file=isset($_FILES['file'])?$_FILES['file']:false;
+        $file=isset($_FILES['file'])?$this->sanitize_text_field_recursive_array($_FILES['file']):false;
         if($order_id>0)
         {
             if($file)
@@ -1885,8 +1918,11 @@ class avex{
                         foreach($items as $item)
                         {
                             $product = wc_get_product($item->get_product_id());
-                            $tmp=array("product_code"=>$product->get_sku(),"amount"=>$item->get_quantity());
-                            $avex_items[]=$tmp;
+                            if($product)
+                            {
+                                $tmp=array("product_code"=>$product->get_sku(),"amount"=>$item->get_quantity());
+                                $avex_items[]=$tmp;
+                            }
                         }
                     }
                     if(count($items)==0)
@@ -2108,6 +2144,8 @@ class avex{
                     $awb_file=basename(get_post_meta($order->get_id(),"_avex_order_awb_file",true));
                     $avex_order_id=get_post_meta($order->get_id(),"_avex_order_id",true);
                     $avex_order_status=$this->getAvexOrderStatus($avex_order_id);
+                    if($avex_order_status=='')
+                        $avex_order_status='Comanda Noua';
                     ?>
                     <div style="margin: 10px 10px 10px 0;"><img width="100" src="<?php echo esc_attr($img);?>"></div>
                     <div style="margin: 10px 10px 10px 0;">
@@ -2177,10 +2215,16 @@ class avex{
                         contentType: false,
                         processData: false,
                         success: function(response){
-                            if(response!=1)
+                            if(response!=1 && response!=2)
                             {
                                 jQuery("#avex_dropshipping_romania_ajax_result").html(response);
                                 jQuery("#avex_dropshipping_romania_cancel_order_btn").val(\''.esc_js(__("Cancel Avex Order","dropshipping-romania-avex")).'\');
+                            }
+                            else if(response==2)
+                            {
+                                jQuery("#avex_dropshipping_romania_ajax_result").html(\''.esc_js(__("Order cannot be cancelled anymore","dropshipping-romania-avex")).'\');
+                                jQuery("#avex_dropshipping_romania_cancel_order_btn").val(\''.esc_js(__("Cancel Avex Order","dropshipping-romania-avex")).'\');
+                                jQuery("#avex_dropshipping_romania_cancel_order_btn").attr(\'disabled\',\'disabled\');
                             }
                             else
                             {
@@ -2205,7 +2249,7 @@ class avex{
                 $avex_order_status=$this->getAvexOrderStatus($avex_order_id);
                 ?>
                 <div style="margin-top: 20px;margin-bottom: 10px;">
-                <div id="avex_dropshipping_romania_ajax_result" style="margin: 10px 10px 10px 0;"></div>
+                <div id="avex_dropshipping_romania_ajax_result" style="margin: 10px 10px 10px 0;font-weight:bold;color:red;"></div>
                 <div style="margin: 10px 10px 10px 0;"><img width="100" src="<?php echo esc_attr($img);?>"></div>
                 <div style="margin: 10px 10px 10px 0;">
                 <strong style="color:green;">
@@ -2284,41 +2328,50 @@ class avex{
             $avex_order=array(
                 "order_id" => $avex_order_id
             );
-            $result=$this->doAvexRequest($this->avex_api_cancel_order_url,"",$avex_order);
-            if(is_array($result) && isset($result['status']) && $result['status']=='error' && isset($result['msg']))
+            $avex_order_status=$this->getAvexOrderStatus($avex_order_id);
+            if(strtolower($avex_order_status)=='comanda noua' || $avex_order_status=='')
             {
-                ?>
-                <strong style="color:red;">
-                <?php
-                echo esc_html($result['msg']);
-                ?>
-                </strong>
-                <?php
-                return;
+                $result=$this->doAvexRequest($this->avex_api_cancel_order_url,"",$avex_order);
+                if(is_array($result) && isset($result['status']) && $result['status']=='error' && isset($result['msg']))
+                {
+                    ?>
+                    <strong style="color:red;">
+                    <?php
+                    echo esc_html($result['msg']);
+                    ?>
+                    </strong>
+                    <?php
+                    return;
+                }
+                if(is_array($result) && isset($result['success']) && $result['success']==false && isset($result['message']))
+                {
+                    ?>
+                    <strong style="color:red;">
+                    <?php
+                    echo esc_html($result['message']);
+                    ?>
+                    </strong>
+                    <?php
+                    return;
+                }
+                if(is_array($result) && isset($result['status']) && $result['status']=="ok" && isset($result['msg']) && is_object($result['msg']) && isset($result['msg']->success) && $result['msg']->success==1 && isset($result['msg']->message) && isset($result['msg']->data) && is_object($result['msg']->data) && isset($result['msg']->data->order_id) && isset($result['msg']->data->status))
+                {
+                    $awb_file=get_post_meta($order_id,"_avex_order_awb_file",true);
+                    if(is_file($awb_file))
+                        unlink($awb_file);
+                    delete_post_meta($order_id,"_avex_order_sent");
+                    delete_post_meta($order_id,"_avex_order_id");
+                    delete_post_meta($order_id,"_avex_order_status");
+                    delete_post_meta($order_id,"_avex_order_awb_file");
+                    delete_post_meta($order_id,"_avex_order_awb_file_url");
+                    $this->saveLog($avex_order_id." ".__(" cancelled Avex order","dropshipping-romania-avex"));
+                    echo "1";
+                    return;
+                }
             }
-            if(is_array($result) && isset($result['success']) && $result['success']==false && isset($result['message']))
+            else
             {
-                ?>
-                <strong style="color:red;">
-                <?php
-                echo esc_html($result['message']);
-                ?>
-                </strong>
-                <?php
-                return;
-            }
-            if(is_array($result) && isset($result['status']) && $result['status']=="ok" && isset($result['msg']) && is_object($result['msg']) && isset($result['msg']->success) && $result['msg']->success==1 && isset($result['msg']->message) && isset($result['msg']->data) && is_object($result['msg']->data) && isset($result['msg']->data->order_id) && isset($result['msg']->data->status))
-            {
-                $awb_file=get_post_meta($order_id,"_avex_order_awb_file",true);
-                if(is_file($awb_file))
-                    unlink($awb_file);
-                delete_post_meta($order_id,"_avex_order_sent");
-                delete_post_meta($order_id,"_avex_order_id");
-                delete_post_meta($order_id,"_avex_order_status");
-                delete_post_meta($order_id,"_avex_order_awb_file");
-                delete_post_meta($order_id,"_avex_order_awb_file_url");
-                $this->saveLog($avex_order_id." ".__(" cancelled Avex order","dropshipping-romania-avex"));
-                echo "1";
+                echo "2";
                 return;
             }
         }
@@ -2430,11 +2483,11 @@ class avex{
         $draw=isset($_POST['draw'])?(int)$_POST['draw']:0;
         $start=isset($_POST['start'])?(int)$_POST['start']:0;
         $length=isset($_POST['length'])?(int)$_POST['length']:10;
-        $search_arr=isset($_POST['search'])?$_POST['search']:array();
-        $search=isset($search_arr['value'])?sanitize_text_field($search_arr['value']):"";
         $start_date=isset($_POST['start_date'])?sanitize_text_field($_POST['start_date']):"";
         $end_date=isset($_POST['end_date'])?sanitize_text_field($_POST['end_date']):"";
-        $order_arr=isset($_POST['order'])?$_POST['order']:array();
+        $order_arr=isset($_POST['order'])?$this->sanitize_text_field_recursive_array($_POST['order']):array();
+        $search_arr=isset($_POST['search'])?$this->sanitize_text_field_recursive_array($_POST['search']):array();
+        $search=isset($search_arr['value'])?sanitize_text_field($search_arr['value']):"";
         $invoices=new stdClass;
         $invoices->invoices=array();
         $invoices->total_invoicess=0;
@@ -2496,20 +2549,30 @@ class avex{
             $result=$wpdb->get_row($sql);
             if(isset($result->total))
                 $invoices->total_filtered_invoices=$result->total;
-
-            $sql=$wpdb->prepare("select i.* from ".$wpdb->prefix."dropshipping_romania_avex_invoices i
-            where
-            i.mdate>=%s and
-            i.mdate<=%s and
-            (
-                i.`post_id` like %s or
-                i.`invoice_id` like %s or
-                i.`order_id` like %s or
-                i.`order_total` like %s
-            )
-            order by ".implode(",",array_map('esc_sql',$order_by))."
-            limit %d,%d",array($start_date,$end_date,"%".$search."%","%".$search."%","%".$search."%","%".$search."%",$start,$length));
-            $results=$wpdb->get_results($sql);
+            $sql = "select i.* 
+                    FROM ".$wpdb->prefix."dropshipping_romania_avex_invoices i
+                    WHERE i.mdate >= %s AND i.mdate <= %s AND (
+                        i.post_id LIKE %s OR
+                        i.invoice_id LIKE %s OR
+                        i.order_id LIKE %s OR
+                        i.order_total LIKE %s
+                    )";
+            $order_by_sql = '';
+            if (!empty($order_by)) {
+                $order_by_sql = "order by ".implode(",",array_map('esc_sql',$order_by));
+            }
+            $sql .= ' ' . $order_by_sql;
+            $query = $wpdb->prepare($sql." LIMIT %d, %d", array(
+                $start_date,
+                $end_date,
+                "%".$search."%",
+                "%".$search."%",
+                "%".$search."%",
+                "%".$search."%",
+                $start,
+                $length
+            ));
+            $results = $wpdb->get_results($query);
             if(is_array($results))
                 $invoices->invoices=$results;
         }
@@ -2525,13 +2588,22 @@ class avex{
                 if(isset($result->total))
                     $invoices->total_filtered_invoices=$result->total;
             }
-            $sql=$wpdb->prepare("select i.* from ".$wpdb->prefix."dropshipping_romania_avex_invoices i
-            where
-            i.mdate>=%s and
-            i.mdate<=%s
-            order by ".implode(",",array_map('esc_sql',$order_by))."
-            limit %d,%d",array($start_date,$end_date,$start,$length));
-            $results=$wpdb->get_results($sql);
+            $sql = "select i.* 
+                    FROM ".$wpdb->prefix."dropshipping_romania_avex_invoices i
+                    WHERE i.mdate >= %s AND i.mdate <= %s";
+            $order_by_sql = '';
+            if (!empty($order_by)) {
+                $order_by_sql = "order by ".implode(",",array_map('esc_sql',$order_by));
+            }
+            $sql .= ' ' . $order_by_sql;
+            $sql .= ' LIMIT %d, %d';
+            $query = $wpdb->prepare($sql, array(
+                $start_date,
+                $end_date,
+                $start,
+                $length
+            ));
+            $results = $wpdb->get_results($query);
             if(is_array($results))
                 $invoices->invoices=$results;
         }
@@ -2563,7 +2635,7 @@ class avex{
             $data['draw']=esc_html($invoices->draw);
             $data['recordsTotal']=esc_html($invoices->total_invoices);
             $data['recordsFiltered']=esc_html($invoices->total_filtered_invoices);
-            echo json_encode($data);
+            echo wp_json_encode($data);
         }
     }
     public function startInvoicesCron()

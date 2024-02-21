@@ -13,10 +13,9 @@ $request=$avex->getInvoices();
 $invoices=$request->invoices;
 
 $data_js="";
-
+$msg="";
 if(is_array($invoices) && count($invoices)>0)
 {
-    $msg="";
     $action=isset($_POST['action'])?sanitize_text_field($_POST['action']):"";
     if($action=="setart_cron_invoices_now")
     {

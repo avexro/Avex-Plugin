@@ -95,7 +95,7 @@ $nonce = wp_create_nonce( 'dropshipping_romania_avex_settings_page_form' );
                 continue;
             ?>
             <tr>
-                <td><label for="<?php echo esc_attr($config_name);?>"><?php echo $setting_names[$config_name];?></label></td>
+                <td><label for="<?php echo esc_attr($config_name);?>"><?php echo esc_html($setting_names[$config_name]);?></label></td>
                 <td>
                     <?php
                     if(in_array($config_value,array("yes","no")))
@@ -155,7 +155,7 @@ $nonce = wp_create_nonce( 'dropshipping_romania_avex_settings_page_form' );
                                             $interval_str=esc_html__("month","dropshipping-romania-avex");
                                     }
                                     ?>
-                                    <option value="<?php echo esc_attr($value);?>"<?php echo ($config_value==$value)?' selected="selected"':'';?>><?php esc_html_e($value,"dropshipping-romania-avex");?> <?php echo $interval_str;?></option>
+                                    <option value="<?php echo esc_attr($value);?>"<?php echo ($config_value==$value)?' selected="selected"':'';?>><?php echo esc_html($value);?> <?php echo esc_html($interval_str);?></option>
                                     <?php
                                 }
                             }
@@ -216,12 +216,12 @@ $nonce = wp_create_nonce( 'dropshipping_romania_avex_settings_page_form' );
                                     if(in_array($value,range(1,6)))
                                     {
                                         if($value==1)
-                                            echo esc_html__($value,"dropshipping-romania-avex")." ".esc_html__("hour","dropshipping-romania-avex");
+                                            echo esc_html($value)." ".esc_html__("hour","dropshipping-romania-avex");
                                         else
-                                            echo esc_html__($value,"dropshipping-romania-avex")." ".esc_html__("hours","dropshipping-romania-avex");
+                                            echo esc_html($value)." ".esc_html__("hours","dropshipping-romania-avex");
                                     }
                                    else
-                                        echo esc_html__($value,"dropshipping-romania-avex")." ".esc_html__("minutes","dropshipping-romania-avex");
+                                        echo esc_html($value)." ".esc_html__("minutes","dropshipping-romania-avex");
                                     ?>
                                     </option>
                                 <?php
