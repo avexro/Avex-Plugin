@@ -103,7 +103,7 @@ class Dropshipping_Romania_Avex_Activator {
 
         $table_name=$wpdb->prefix.'dropshipping_romania_avex_config';
         if( $wpdb->get_var( $wpdb->prepare("show tables like %s" ),$table_name) != $table_name ) {
-            $sql=$wpdb->prepare("CREATE TABLE `$table_name` (
+            $sql=$wpdb->prepare("create TABLE ".$wpdb->prefix."dropshipping_romania_avex_config (
                 `id` int(11) NOT NULL AUTO_INCREMENT,
                 `config_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '',
                 `config_value` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '',
@@ -118,7 +118,7 @@ class Dropshipping_Romania_Avex_Activator {
 
         $table_name=$wpdb->prefix.'dropshipping_romania_avex_logs';
         if( $wpdb->get_var( $wpdb->prepare("show tables like %s" ),$table_name) != $table_name ) {
-            $sql=$wpdb->prepare("CREATE TABLE `$table_name` (
+            $sql=$wpdb->prepare("create TABLE ".$wpdb->prefix."dropshipping_romania_avex_logs (
                 `user_id` int(11) NOT NULL,
                 `log` varchar(1024) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '',
                 `mdate` int(11) NOT NULL,
@@ -131,7 +131,7 @@ class Dropshipping_Romania_Avex_Activator {
 
         $table_name=$wpdb->prefix.'dropshipping_romania_avex_products';
         if( $wpdb->get_var( $wpdb->prepare("show tables like %s" ),$table_name) != $table_name ) {
-            $sql=$wpdb->prepare("CREATE TABLE `$table_name` (
+            $sql=$wpdb->prepare("create TABLE ".$wpdb->prefix."dropshipping_romania_avex_products (
                 `post_id` INT(11) NOT NULL DEFAULT '0' , 
                 `imported` TINYINT(1) NOT NULL DEFAULT '0',
                 `sku` VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' , 
@@ -157,7 +157,7 @@ class Dropshipping_Romania_Avex_Activator {
 
         $table_name=$wpdb->prefix.'dropshipping_romania_avex_invoices';
         if( $wpdb->get_var( $wpdb->prepare("show tables like %s" ),$table_name) != $table_name ) {
-            $sql=$wpdb->prepare("CREATE TABLE `$table_name` (
+            $sql=$wpdb->prepare("create TABLE ".$wpdb->prefix."dropshipping_romania_avex_invoices (
                 `post_id` INT(11) NOT NULL DEFAULT '0' , 
                 `invoice_id` INT(11) NOT NULL DEFAULT '0' , 
                 `order_id` INT(11) NOT NULL DEFAULT '0' , 
@@ -215,8 +215,14 @@ class Dropshipping_Romania_Avex_Activator {
         $result=$wpdb->get_row($sql);
         if(isset($result->config_value) && $result->config_value=='yes')
             $this->dropshipping_romania_avex_remove_uploads_folder(DROPSHIPPING_ROMANIA_AVEX_UPLOADS_PATH.get_current_blog_id());
-        foreach($this->avexTables as $table)
-            $wpdb->query( "DROP TABLE IF EXISTS ".$wpdb->prefix.$table );
+        $sql=$wpdb->prepare("drop TABLE IF EXISTS ".$wpdb->prefix."dropshipping_romania_avex_config");
+        $wpdb->query($sql);
+        $sql=$wpdb->prepare("drop TABLE IF EXISTS ".$wpdb->prefix."dropshipping_romania_avex_logs");
+        $wpdb->query($sql);
+        $sql=$wpdb->prepare("drop TABLE IF EXISTS ".$wpdb->prefix."dropshipping_romania_avex_products");
+        $wpdb->query($sql);
+        $sql=$wpdb->prepare("drop TABLE IF EXISTS ".$wpdb->prefix."dropshipping_romania_avex_invoices");
+        $wpdb->query($sql);
         delete_option('DROPSHIPPING_ROMANIA_AVEX_VERSION');
     }
     function dropshipping_romania_avex_remove_uploads_folder($dir)

@@ -292,7 +292,7 @@ else
                             <?php esc_html_e("Wallet Balance","dropshipping-romania-avex");?>
                         </td>
                         <td>
-                            <strong><?php echo esc_html(number_format(round((float)$status->data->balance,2),2,".",""));?></strong>
+                            <strong><?php echo esc_html(number_format(round((float)str_replace(",","",$status->data->balance),2),2,".",""));?></strong>
                         </td>
                         <td>
                             <?php esc_html_e("Status access API","dropshipping-romania-avex");?>
