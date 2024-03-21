@@ -82,7 +82,7 @@ class Dropshipping_Romania_Avex_Activator {
      *
      * @since    1.0.0
      */
-    public function activate() {
+    public function activaeaza() {
         global $wpdb;
         
         $this->runFunctionsForMultiOrSingleBlog("createTables");

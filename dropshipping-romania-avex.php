@@ -49,24 +49,24 @@ else
  * The code that runs during plugin activation.
  * This action is documented in includes/class-dropshipping-romania-avex-activator.php
  */
-function activate_dropshipping_romania_avex() {
+function activaeaza_dropshipping_romania_avex() {
 	require_once plugin_dir_path( __FILE__ ) . 'includes/class-dropshipping-romania-avex-activator.php';
 	$activator = new DropshippingRomaniaAvex\Dropshipping_Romania_Avex_Activator;
-    $activator->activate();
+    $activator->activaeaza();
 }
 
 /**
  * The code that runs during plugin deactivation.
  * This action is documented in includes/class-dropshipping-romania-avex-deactivator.php
  */
-function deactivate_dropshipping_romania_avex() {
+function deactivaeaza_dropshipping_romania_avex() {
 	require_once plugin_dir_path( __FILE__ ) . 'includes/class-dropshipping-romania-avex-deactivator.php';
 	$deactivator = new DropshippingRomaniaAvex\Dropshipping_Romania_Avex_Deactivator;
-    $deactivator->deactivate();
+    $deactivator->deactivaeaza();
 }
 
-register_activation_hook( __FILE__, 'activate_dropshipping_romania_avex' );
-register_deactivation_hook( __FILE__, 'deactivate_dropshipping_romania_avex' );
+register_activation_hook( __FILE__, 'activaeaza_dropshipping_romania_avex' );
+register_deactivation_hook( __FILE__, 'deactivaeaza_dropshipping_romania_avex' );
 
 // Creating table whenever a new blog is created
 function avex_new_blog_dropshipping_romania_avex_plugin_check($blog_id, $user_id, $domain, $path, $site_id, $meta) {

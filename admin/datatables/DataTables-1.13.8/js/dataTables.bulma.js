@@ -1,7 +1,3 @@
-/*! DataTables Bulma integration
- * ©2020 SpryMedia Ltd - datatables.net/license
- */
-
 (function( factory ){
 	if ( typeof define === 'function' && define.amd ) {
 		// AMD

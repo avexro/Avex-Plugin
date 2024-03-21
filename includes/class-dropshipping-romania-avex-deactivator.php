@@ -30,7 +30,7 @@ class Dropshipping_Romania_Avex_Deactivator {
 	 *
 	 * @since    1.0.0
 	 */
-	public function deactivate() {
+	public function deactivaeaza() {
 
 	}
 

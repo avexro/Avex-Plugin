@@ -229,7 +229,7 @@ class avex{
                     )";
             $order_by_sql = '';
             if (!empty($order_by)) {
-                $order_by_sql = "order by ".implode(",",array_map('esc_sql',$order_by));
+                $order_by_sql = call_user_func_array(array($wpdb, 'prepare'), array("order by ".implode(",",$order_by)));
             }
             $sql .= ' ' . $order_by_sql;
             $query = $wpdb->prepare($sql." LIMIT %d, %d", array(
@@ -247,6 +247,7 @@ class avex{
             $results = $wpdb->get_results($query);
             if(is_array($results))
                 $logs->logs=$results;
+
         }
         else
         {
@@ -266,7 +267,7 @@ class avex{
                     WHERE l.mdate >= %s AND l.mdate <= %s";
             $order_by_sql = '';
             if (!empty($order_by)) {
-                $order_by_sql = "order by ".implode(",",array_map('esc_sql',$order_by));
+                $order_by_sql = call_user_func_array(array($wpdb, 'prepare'), array("order by ".implode(",",$order_by)));
             }
             $sql .= ' ' . $order_by_sql;
             $query = $wpdb->prepare($sql." LIMIT %d, %d", array(
@@ -2559,7 +2560,7 @@ class avex{
                     )";
             $order_by_sql = '';
             if (!empty($order_by)) {
-                $order_by_sql = "order by ".implode(",",array_map('esc_sql',$order_by));
+                $order_by_sql = call_user_func_array(array($wpdb, 'prepare'), array("order by ".implode(",",$order_by)));
             }
             $sql .= ' ' . $order_by_sql;
             $query = $wpdb->prepare($sql." LIMIT %d, %d", array(
@@ -2593,7 +2594,7 @@ class avex{
                     WHERE i.mdate >= %s AND i.mdate <= %s";
             $order_by_sql = '';
             if (!empty($order_by)) {
-                $order_by_sql = "order by ".implode(",",array_map('esc_sql',$order_by));
+                $order_by_sql = call_user_func_array(array($wpdb, 'prepare'), array("order by ".implode(",",$order_by)));
             }
             $sql .= ' ' . $order_by_sql;
             $sql .= ' LIMIT %d, %d';

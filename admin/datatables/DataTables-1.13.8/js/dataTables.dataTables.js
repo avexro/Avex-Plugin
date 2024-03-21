@@ -1,7 +1,3 @@
-/*! DataTables styling integration
- * ©2018 SpryMedia Ltd - datatables.net/license
- */
-
 (function( factory ){
 	if ( typeof define === 'function' && define.amd ) {
 		// AMD
